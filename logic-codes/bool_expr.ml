@@ -11,15 +11,16 @@ let rec eval env = function
 	| And (e1,e2) -> (eval env e1) && (eval env e2)
 	| Or (e1,e2) -> (eval env e1) || (eval env e2);;
 
-(* Produce all boolean combinations*)
+(* Produce all boolean combinations for variables*)
 let produce vars = 
 	let rec aux acc = function
 		| [] -> [List.rev acc]
-		| h :: t -> List.append (aux ((h, true) :: acc) t) 
-								(aux ((h, false) :: acc) t) in
+		| v :: tl ->  (aux ((v, true) :: acc) tl) 
+					 @ (aux ((v, false) :: acc) tl) in
 	aux [] vars  
 	 		
 (* Truth tables*)
 let table vars expr = 
+	(* For each combination evaluate the expression*)
 	let combinations = produce vars in
 		List.map (function combi -> (combi,  (eval combi expr))) combinations
